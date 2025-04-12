@@ -1,0 +1,13 @@
+.idea/
+target/
+*.log
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.git/
+.github/
+.vscode/
+*.md
+!README.md 

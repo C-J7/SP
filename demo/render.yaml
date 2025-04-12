@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: studypilot-backend
+    env: java
+    buildCommand: "./mvnw clean install"
+    startCommand: "java -jar target/*.jar"
+    plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: ${SUPABASE_DB_URL}
+      - key: SPRING_DATASOURCE_USERNAME
+        value: ${SUPABASE_DB_USER}
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: ${SUPABASE_DB_PASSWORD}
+      - key: SUPABASE_URL
+        value: ${SUPABASE_URL}
+      - key: SUPABASE_KEY
+        value: ${SUPABASE_KEY}
+      - key: SUPABASE_STORAGE_BUCKET
+        value: syllabi 
