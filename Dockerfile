@@ -36,6 +36,19 @@ USER appuser
 # Configure JVM options for containers
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
 
+#environment variables for Supabase configuration
+ARG SUPABASE_DB_URL
+ARG SUPABASE_DB_USER
+ARG SUPABASE_DB_PASSWORD
+ARG SUPABASE_URL
+ARG SUPABASE_KEY
+
+ENV SUPABASE_DB_URL=$SUPABASE_DB_URL \
+    SUPABASE_DB_USER=$SUPABASE_DB_USER \
+    SUPABASE_DB_PASSWORD=$SUPABASE_DB_PASSWORD \
+    SUPABASE_URL=$SUPABASE_URL \
+    SUPABASE_KEY=$SUPABASE_KEY
+
 # Expose the application port
 EXPOSE 8080
 
