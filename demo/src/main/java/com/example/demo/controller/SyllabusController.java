@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,8 +27,12 @@ public class SyllabusController {
             @RequestParam("semester") String semester,
             @RequestParam("userId") String userId) {
         
-        Syllabus syllabus = syllabusService.uploadSyllabus(file, title, faculty, department, semester, userId);
-        return ResponseEntity.ok(syllabus);
+        try {
+            Syllabus syllabus = syllabusService.uploadSyllabus(file, title, faculty, department, semester, userId);
+            return ResponseEntity.ok(syllabus);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).build();
+        }
     }
     
     @GetMapping

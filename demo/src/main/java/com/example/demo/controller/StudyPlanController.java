@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class StudyPlanController {
             @RequestParam Long syllabusId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestBody Map<String, LocalDate> busyHours,
+            @RequestBody Map<String, LocalDateTime> busyHours,
             @RequestParam String userId) {
         
         StudyPlan studyPlan = studyPlanService.generateStudyPlan(syllabusId, startDate, endDate, busyHours, userId);

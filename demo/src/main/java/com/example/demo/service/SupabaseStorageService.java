@@ -78,4 +78,9 @@ public class SupabaseStorageService {
             throw new IOException("Delete operation interrupted", e);
         }
     }
+
+    public String uploadFileToBucket(MultipartFile file, String bucketName2, String filename) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'uploadFileToBucket'");
+    }
 } 

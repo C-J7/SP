@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.util.StringUtils;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,14 +50,18 @@ public class SyllabusService {
         }
         
         // Generate unique filename
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new IllegalArgumentException("File must have a valid original filename");
+        }
+        originalFilename = StringUtils.cleanPath(originalFilename);
         String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String newFilename = UUID.randomUUID().toString() + fileExtension;
         
         // Upload file to Supabase storage
         String fileUrl;
         try {
-            fileUrl = supabaseStorageService.uploadFile(file, newFilename);
+            fileUrl = uploadToSupabase(file, newFilename);
         } catch (IOException e) {
             throw new IOException("Failed to upload file to storage: " + e.getMessage(), e);
         }
@@ -111,9 +113,11 @@ public class SyllabusService {
         }
     }
     
-    // TODO: Implement Supabase storage upload
-    private String uploadToSupabase(MultipartFile file, String filename) {
-        // Implementation for uploading to Supabase storage
-        return null;
+    private String uploadToSupabase(MultipartFile file, String filename) throws IOException {
+        // Define the storage bucket name
+        String bucketName = "pdfs";
+        
+        // Upload the file to the Supabase storage bucket
+        return supabaseStorageService.uploadFileToBucket(file, bucketName, filename);
     }
 } 
