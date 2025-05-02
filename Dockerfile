@@ -5,8 +5,8 @@ FROM maven:3.9.4-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # Copy Maven configuration files
-COPY pom.xml .
-COPY src ./src
+COPY demo/pom.xml .
+COPY demo/src ./src
 
 # Download dependencies (this layer will be cached unless dependencies change)
 RUN mvn dependency:go-offline -B
