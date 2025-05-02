@@ -41,7 +41,7 @@ SUPABASE_DB_PASSWORD=your-database-password
 # Google Calendar API Configuration (Optional)
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_REDIRECT_URI=http://localhost:8080/api/auth/google/callback
+GOOGLE_REDIRECT_URI=https://studypilot.vercel.app/api/auth/google/callback
 
 # Application Configuration
 SPRING_PROFILES_ACTIVE=dev
