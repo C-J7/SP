@@ -80,7 +80,7 @@ public class SupabaseStorageService {
     }
 
     public String uploadFileToBucket(MultipartFile file, String bucketName2, String filename) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'uploadFileToBucket'");
+        // not implemented yet.
+        throw new UnsupportedOperationException("todo 'uploadFileToBucket'");
     }
 } 
