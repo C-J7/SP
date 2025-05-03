@@ -12,6 +12,7 @@ public class EnvConfig {
         return Dotenv.configure()
                 .directory("./")
                 .ignoreIfMissing()
+                .systemProperties() // This prioritizes system environment variables
                 .load();
     }
-} 
+}
