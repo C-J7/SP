@@ -7,8 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 import java.net.InetAddress;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
@@ -30,73 +30,97 @@ public class DatabaseConnectionDebugger {
     @Bean
     public CommandLineRunner debugDatabaseConnection() {
         return args -> {
-            log.info("DEBUGGING DATABASE CONNECTION");
-            log.info("============================");
+            log.info("🔍 DATABASE CONNECTION DIAGNOSTICS");
+            log.info("=================================");
             log.info("Database URL: {}", maskPassword(url));
             log.info("Database Username: {}", username);
-            log.info("Current Host Info: {}", InetAddress.getLocalHost().toString());
-            log.info("JVM DNS Cache Policy: {}", System.getProperty("networkaddress.cache.ttl", "Not Set"));
+            log.info("Host OS & JVM: {} / Java {}", System.getProperty("os.name"), System.getProperty("java.version"));
+            
+            try {
+                log.info("Current Host Info: {}", InetAddress.getLocalHost());
+            } catch (Exception e) {
+                log.warn("Could not determine local host info: {}", e.getMessage());
+            }
+            
+            // Parse URL to show components
+            try {
+                URI uri = URI.create(url.replace("jdbc:", ""));
+                log.info("Host: {}", uri.getHost());
+                log.info("Port: {}", uri.getPort());
+                log.info("Path: {}", uri.getPath());
+            } catch (Exception e) {
+                log.warn("Could not parse JDBC URL: {}", e.getMessage());
+            }
             
             // Test direct connection using DriverManager
             try {
                 Class.forName("org.postgresql.Driver");
-                log.info("PostgreSQL Driver loaded successfully");
+                log.info("✅ PostgreSQL Driver loaded successfully");
                 
                 Properties props = new Properties();
                 props.setProperty("user", username);
                 props.setProperty("password", password);
+                props.setProperty("ssl", "true");
+                props.setProperty("sslmode", "require");
                 props.setProperty("connectTimeout", "10");
                 props.setProperty("loginTimeout", "10");
                 
-                log.info("Attempting direct JDBC connection...");
+                log.info("⏳ Attempting direct JDBC connection...");
                 Connection conn = DriverManager.getConnection(url, props);
-                log.info("✓ Direct JDBC connection successful!");
-                log.info("Database Product Name: {}", conn.getMetaData().getDatabaseProductName());
-                log.info("Database Product Version: {}", conn.getMetaData().getDatabaseProductVersion());
+                log.info("✅ Direct JDBC connection successful!");
+                log.info("Database Product: {} {}", 
+                        conn.getMetaData().getDatabaseProductName(),
+                        conn.getMetaData().getDatabaseProductVersion());
                 conn.close();
+                log.info("✅ Connection closed properly");
             } catch (Exception e) {
-                log.error("✗ Direct JDBC connection failed!", e);
+                log.error("❌ Direct JDBC connection failed!", e);
                 log.error("Error Message: {}", e.getMessage());
+                
                 if (e.getCause() != null) {
                     log.error("Root Cause: {}", e.getCause().getMessage());
                 }
                 
-                // Try alternative connection methods
-                String altUrl = url;
-                if (url.contains("db.oyyhqjpemqltsqjlxyqn.supabase.co")) {
-                    log.info("Trying to resolve Supabase host IP...");
+                // Try to look up the Supabase host to check DNS
+                String hostToPing = null;
+                
+                if (url.contains("aws-0-eu-west-2.pooler.supabase.com")) {
+                    hostToPing = "aws-0-eu-west-2.pooler.supabase.com";
+                } else if (url.contains("oyyhqjpemqltsqjlxyqn.supabase.co")) {
+                    hostToPing = "db.oyyhqjpemqltsqjlxyqn.supabase.co";
+                }
+                
+                if (hostToPing != null) {
+                    log.info("🌐 Trying to resolve Supabase host {}...", hostToPing);
                     try {
-                        InetAddress[] addresses = InetAddress.getAllByName("db.oyyhqjpemqltsqjlxyqn.supabase.co");
+                        InetAddress[] addresses = InetAddress.getAllByName(hostToPing);
                         for (InetAddress addr : addresses) {
-                            log.info("Resolved IP: {}", addr.getHostAddress());
-                        }
-                        
-                        // Try direct IP connection
-                        if (addresses.length > 0) {
-                            String ipAddress = addresses[0].getHostAddress();
-                            altUrl = url.replace("db.oyyhqjpemqltsqjlxyqn.supabase.co", ipAddress);
-                            log.info("Attempting connection to: {}", maskPassword(altUrl));
-                            try {
-                                Connection conn = DriverManager.getConnection(altUrl, username, password);
-                                log.info("✓ Direct IP connection successful!");
-                                conn.close();
-                            } catch (Exception e2) {
-                                log.error("✗ Direct IP connection failed: {}", e2.getMessage());
-                            }
+                            log.info("✅ Resolved to IP: {}", addr.getHostAddress());
                         }
                     } catch (Exception e3) {
-                        log.error("Could not resolve host: {}", e3.getMessage());
+                        log.error("❌ Could not resolve host: {}", e3.getMessage());
+                        log.info("⚠️ This suggests a network/DNS issue");
                     }
                 }
+                
+                // Detailed troubleshooting instructions
+                log.info("");
+                log.info("🔧 TROUBLESHOOTING TIPS 🔧");
+                log.info("1. Check if your user name is correct for the pooler: should be format 'postgres.yourprojectref'");
+                log.info("2. Verify that your Supabase database password is correct");
+                log.info("3. Ensure that Supabase pooler allows connections from external IPs");
+                log.info("4. If using SSL, make sure it's properly configured ('sslmode=require')");
+                log.info("");
             }
         };
     }
     
     private String maskPassword(String url) {
-        // Don't log actual passwords
-        if (url != null && url.contains("password=")) {
-            return url.replaceAll("password=([^&]*)", "password=******");
+        // Don't log actual passwords in URL parameters
+        if (url == null) {
+            return "null";
         }
-        return url;
+        return url.replaceAll("password=[^&]*", "password=******")
+                 .replaceAll("pwd=[^&]*", "pwd=******");
     }
 }
