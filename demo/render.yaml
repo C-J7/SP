@@ -5,15 +5,15 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     envVars:
-      - key: SUPABASE_DB_URL
-        value: jdbc:postgresql://db.oyyhqjpemqltsqjlxyqn.supabase.co:5432/postgres
-      - key: SUPABASE_DB_USER
-        value: postgres
-      - key: SUPABASE_DB_PASSWORD
-        fromVariable: SUPABASE_DB_PASSWORD
+      - key: SPRING_DATASOURCE_URL
+        value: ${SUPABASE_DB_URL}
+      - key: SPRING_DATASOURCE_USERNAME
+        value: ${SUPABASE_DB_USER}
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: ${SUPABASE_DB_PASSWORD}
       - key: SUPABASE_URL
         value: ${SUPABASE_URL}
       - key: SUPABASE_KEY
         value: ${SUPABASE_KEY}
       - key: SUPABASE_STORAGE_BUCKET
-        value: syllabi
+        value: syllabi 
