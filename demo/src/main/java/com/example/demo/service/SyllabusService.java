@@ -4,7 +4,6 @@ import com.example.demo.model.Syllabus;
 import com.example.demo.repository.SyllabusRepository;
 import com.example.demo.exception.InvalidPdfException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
@@ -21,12 +20,6 @@ public class SyllabusService {
     
     @Autowired
     private PdfParsingService pdfParsingService;
-    
-    @Value("${supabase.url}")
-    private String supabaseUrl;
-    
-    @Value("${supabase.key}")
-    private String supabaseKey;
     
     public Syllabus uploadSyllabus(MultipartFile file, String title, String faculty, 
                                  String department, String semester, String userId) throws IOException {

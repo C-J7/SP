@@ -8,17 +8,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Pdf;
 import com.example.demo.repository.PdfRepository;
+import com.example.demo.exception.InvalidPdfException;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class PdfParsingService {
-
-    @Autowired
-    private SupabaseStorageService supabaseStorageService;
 
     @Autowired
     private PdfRepository pdfRepository;
@@ -74,21 +73,6 @@ public class PdfParsingService {
     }
 
     /**
-     * Uploads a PDF file to Supabase storage and returns the file URL.
-     *
-     * @param file the uploaded PDF file
-     * @return the URL of the uploaded file in Supabase storage
-     * @throws IOException if an error occurs during file upload
-     */
-    public Pdf uploadToSupabase(MultipartFile file) throws IOException {
-        String uniqueFilename = UUID.randomUUID().toString() + ".pdf";
-        String storagePath = "pdfs/" + uniqueFilename;
-        Pdf pdf = new Pdf();
-        pdf.setUrl(supabaseStorageService.uploadFile(file, storagePath));
-        return pdf;
-    }
-
-    /**
      * Finds a PDF by its ID from the database.
      *
      * @param id the ID of the PDF
@@ -96,7 +80,39 @@ public class PdfParsingService {
      * @throws IllegalArgumentException if the PDF is not found
      */
     public Pdf findPdfById(String id) {
-        return pdfRepository.findById(id)
+        return pdfRepository.findById(Long.valueOf(id))
                 .orElseThrow(() -> new IllegalArgumentException("PDF not found with ID: " + id));
+    }
+
+    /**
+     * Uploads a PDF to Neon.
+     *
+     * @param file the uploaded PDF file
+     * @return the saved PDF object
+     * @throws IOException if an error occurs during the upload process
+     */
+    public Pdf uploadToNeon(MultipartFile file) throws IOException {
+        // Validate the PDF file
+        if (!isValidPdf(file)) {
+            throw new InvalidPdfException("The uploaded file is not a valid PDF");
+        }
+
+        // Extract metadata and content
+        String content = extractText(file);
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) {
+            throw new IllegalArgumentException("File must have a valid original filename");
+        }
+        String cleanedFilename = UUID.randomUUID() + "_" + originalFilename;
+
+        // Create and save the Pdf entity
+        Pdf pdf = new Pdf();
+        pdf.setName(originalFilename);
+        pdf.setContent(content);
+        pdf.setSize((int) file.getSize());
+        pdf.setUploadedAt(ZonedDateTime.now());
+        pdf.setStoragePath(cleanedFilename);
+
+        return pdfRepository.save(pdf);
     }
 }

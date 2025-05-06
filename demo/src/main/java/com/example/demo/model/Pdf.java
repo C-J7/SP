@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 public class Pdf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;  // UUID type in Supabase
+    private Long id;  // Changed from String to Long
 
     private String name;
     

@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.IOException;
-
 
 @RestController
 @RequestMapping("/api/pdfs")
@@ -21,7 +19,7 @@ public class PdfController {
 
     @PostMapping("/upload")
     public ResponseEntity<Pdf> uploadPdf(@RequestParam("file") MultipartFile file) throws IOException {
-        Pdf pdf = pdfService.uploadToSupabase(file);
+        Pdf pdf = pdfService.uploadToNeon(file);
         return ResponseEntity.ok(pdf);
     }
 
@@ -30,4 +28,4 @@ public class PdfController {
         Pdf pdf = pdfService.findPdfById(id);
         return ResponseEntity.ok(pdf);
     }
-} 
+}
