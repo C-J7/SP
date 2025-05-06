@@ -5,15 +5,9 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     envVars:
-      - key: SUPABASE_DB_URL
-        value: jdbc:postgresql://aws-0-eu-west-2.pooler.supabase.com:5432/postgres
-      - key: SUPABASE_DB_USER
-        value: postgres.oyyhqjpemqltsqjlxyqn
-      - key: SUPABASE_DB_PASSWORD
-        fromVariable: SUPABASE_DB_PASSWORD
-      - key: SUPABASE_URL
-        value: ${SUPABASE_URL}
-      - key: SUPABASE_KEY
-        value: ${SUPABASE_KEY}
-      - key: SUPABASE_STORAGE_BUCKET
-        value: syllabi
+      - key: NEON_DB_URL
+        value: jdbc:postgresql://neondb_owner:@ep-cool-mountain-a49ejwpl-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+      - key: NEON_DB_USER
+        value: neondb_owner
+      - key: NEON_DB_PASSWORD
+        fromVariable: NEON_DB_PASSWORD
