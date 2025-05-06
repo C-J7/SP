@@ -83,4 +83,4 @@ public class SupabaseStorageService {
         // not implemented yet.
         throw new UnsupportedOperationException("todo 'uploadFileToBucket'");
     }
-} 
+}

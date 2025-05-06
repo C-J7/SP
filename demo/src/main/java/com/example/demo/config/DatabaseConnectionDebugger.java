@@ -81,28 +81,6 @@ public class DatabaseConnectionDebugger {
                     log.error("Root Cause: {}", e.getCause().getMessage());
                 }
                 
-                // Try to look up the Supabase host to check DNS
-                String hostToPing = null;
-                
-                if (url.contains("aws-0-eu-west-2.pooler.supabase.com")) {
-                    hostToPing = "aws-0-eu-west-2.pooler.supabase.com";
-                } else if (url.contains("oyyhqjpemqltsqjlxyqn.supabase.co")) {
-                    hostToPing = "db.oyyhqjpemqltsqjlxyqn.supabase.co";
-                }
-                
-                if (hostToPing != null) {
-                    log.info("🌐 Trying to resolve Supabase host {}...", hostToPing);
-                    try {
-                        InetAddress[] addresses = InetAddress.getAllByName(hostToPing);
-                        for (InetAddress addr : addresses) {
-                            log.info("✅ Resolved to IP: {}", addr.getHostAddress());
-                        }
-                    } catch (Exception e3) {
-                        log.error("❌ Could not resolve host: {}", e3.getMessage());
-                        log.info("⚠️ This suggests a network/DNS issue");
-                    }
-                }
-                
                 // Detailed troubleshooting instructions
                 log.info("");
                 log.info("🔧 TROUBLESHOOTING TIPS 🔧");

@@ -22,9 +22,6 @@ public class SyllabusService {
     @Autowired
     private PdfParsingService pdfParsingService;
     
-    @Autowired
-    private SupabaseStorageService supabaseStorageService;
-    
     @Value("${supabase.url}")
     private String supabaseUrl;
     
@@ -58,14 +55,6 @@ public class SyllabusService {
         String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String newFilename = UUID.randomUUID().toString() + fileExtension;
         
-        // Upload file to Supabase storage
-        String fileUrl;
-        try {
-            fileUrl = uploadToSupabase(file, newFilename);
-        } catch (IOException e) {
-            throw new IOException("Failed to upload file to storage: " + e.getMessage(), e);
-        }
-        
         // Create and save syllabus
         Syllabus syllabus = new Syllabus();
         syllabus.setTitle(title);
@@ -73,7 +62,7 @@ public class SyllabusService {
         syllabus.setDepartment(department);
         syllabus.setSemester(semester);
         syllabus.setUploadedBy(userId);
-        syllabus.setFileUrl(fileUrl);
+        syllabus.setFileUrl(newFilename);
         syllabus.setUploadDate(LocalDateTime.now());
         syllabus.setTopics(topics);
         
@@ -112,12 +101,4 @@ public class SyllabusService {
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
     }
-    
-    private String uploadToSupabase(MultipartFile file, String filename) throws IOException {
-        // Define the storage bucket name
-        String bucketName = "pdfs";
-        
-        // Upload the file to the Supabase storage bucket
-        return supabaseStorageService.uploadFileToBucket(file, bucketName, filename);
-    }
-} 
+}

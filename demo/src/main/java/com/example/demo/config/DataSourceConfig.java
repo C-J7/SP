@@ -23,23 +23,8 @@ public class DataSourceConfig {
                 .build();
     }
 
-    @Bean(name = "supabaseDataSource")
-    public DataSource supabaseDataSource() {
-        return DataSourceBuilder.create()
-                .url(System.getenv("SUPABASE_DB_URL"))
-                .username(System.getenv("SUPABASE_DB_USER"))
-                .password(System.getenv("SUPABASE_DB_PASSWORD"))
-                .driverClassName("org.postgresql.Driver")
-                .build();
-    }
-
     @Bean(name = "neonJdbcTemplate")
     public JdbcTemplate neonJdbcTemplate(@Qualifier("neonDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean(name = "supabaseJdbcTemplate")
-    public JdbcTemplate supabaseJdbcTemplate(@Qualifier("supabaseDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 }
