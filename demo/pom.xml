@@ -31,6 +31,13 @@
 		<spring-ai.version>1.0.0-M6</spring-ai.version>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -103,6 +110,8 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+
 			<!-- Google Calendar API dependencies -->
 <dependency>
     <groupId>com.google.api-client</groupId>

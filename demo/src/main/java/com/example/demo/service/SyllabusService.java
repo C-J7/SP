@@ -23,15 +23,15 @@ public class SyllabusService {
     
     public Syllabus uploadSyllabus(MultipartFile file, String title, String faculty, 
                                  String department, String semester, String userId) throws IOException {
-        // Validate input parameters
+        //Validate input parameters
         validateInputParameters(title, faculty, department, semester, userId);
         
-        // Validate PDF file
+        //Validate PDF file
         if (!pdfParsingService.isValidPdf(file)) {
             throw new InvalidPdfException("The uploaded file is not a valid PDF");
         }
         
-        // Extract text and topics from PDF
+        //Extract text and topics from PDF
         String pdfContent = pdfParsingService.extractText(file);
         List<String> topics = pdfParsingService.extractTopics(pdfContent);
         
@@ -39,7 +39,7 @@ public class SyllabusService {
             throw new InvalidPdfException("No topics could be extracted from the PDF");
         }
         
-        // Generate unique filename
+        //Generate unique filename
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null) {
             throw new IllegalArgumentException("File must have a valid original filename");
@@ -48,7 +48,7 @@ public class SyllabusService {
         String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String newFilename = UUID.randomUUID().toString() + fileExtension;
         
-        // Create and save syllabus
+        //Create and save syllabus
         Syllabus syllabus = new Syllabus();
         syllabus.setTitle(title);
         syllabus.setFaculty(faculty);
@@ -74,6 +74,17 @@ public class SyllabusService {
             throw new IllegalArgumentException("User ID cannot be null or empty");
         }
         return syllabusRepository.findByUploadedBy(userId);
+    }
+    
+    public List<Syllabus> searchSyllabi(String faculty, String department, String semester, String search) {
+        //Search by title or topic
+        List<Syllabus> filtered = getSyllabi(faculty, department, semester);
+        if (search == null || search.trim().isEmpty()) return filtered;
+        String q = search.trim().toLowerCase();
+        return filtered.stream()
+            .filter(s -> (s.getTitle() != null && s.getTitle().toLowerCase().contains(q)) ||
+                         (s.getTopics() != null && s.getTopics().stream().anyMatch(t -> t.toLowerCase().contains(q))))
+            .toList();
     }
     
     private void validateInputParameters(String title, String faculty, String department, 

@@ -20,6 +20,8 @@ public class StudyPlan {
     private LocalDate startDate;
     private LocalDate endDate;
     private String userId;
+    private String name;
+    private List<Course> courses;
 
     @ElementCollection
     @CollectionTable(name = "study_sessions", joinColumns = @JoinColumn(name = "study_plan_id"))

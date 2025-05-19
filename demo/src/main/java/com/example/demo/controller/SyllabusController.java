@@ -50,4 +50,14 @@ public class SyllabusController {
         List<Syllabus> syllabi = syllabusService.getUserSyllabi(userId);
         return ResponseEntity.ok(syllabi);
     }
-} 
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Syllabus>> searchSyllabi(
+            @RequestParam(required = false) String faculty,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String semester,
+            @RequestParam(required = false) String search) {
+        List<Syllabus> syllabi = syllabusService.searchSyllabi(faculty, department, semester, search);
+        return ResponseEntity.ok(syllabi);
+    }
+}
