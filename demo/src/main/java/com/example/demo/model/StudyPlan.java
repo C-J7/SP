@@ -21,6 +21,10 @@ public class StudyPlan {
     private LocalDate endDate;
     private String userId;
     private String name;
+
+    @ElementCollection
+    @Embedded
+    @CollectionTable(name = "courses", joinColumns = @JoinColumn(name = "study_plan_id"))
     private List<Course> courses;
 
     @ElementCollection
