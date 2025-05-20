@@ -42,7 +42,7 @@ public class DatabaseConnectionDebugger {
                 log.warn("Could not determine local host info: {}", e.getMessage());
             }
 
-            // Parse URL to show components
+            //Parse URL to show components
             try {
                 URI uri = URI.create(url.replace("jdbc:", ""));
                 log.info("Host: {}", uri.getHost());
@@ -52,7 +52,7 @@ public class DatabaseConnectionDebugger {
                 log.warn("Could not parse JDBC URL: {}", e.getMessage());
             }
 
-            // Test direct connection using DriverManager
+            //Test direct connection using DriverManager
             try {
                 Class.forName("org.postgresql.Driver");
                 log.info("✅ PostgreSQL Driver loaded successfully");
@@ -81,7 +81,7 @@ public class DatabaseConnectionDebugger {
                     log.error("Root Cause: {}", e.getCause().getMessage());
                 }
 
-                // Detailed troubleshooting instructions
+                //Detailed troubleshooting instructions
                 log.info("");
                 log.info("🔧 TROUBLESHOOTING TIPS 🔧");
                 log.info("1. Check if your username and password are correct.");
@@ -94,7 +94,7 @@ public class DatabaseConnectionDebugger {
     }
 
     private String maskPassword(String url) {
-        // Don't log actual passwords in URL parameters
+        //Don't log actual passwords in URL parameters
         if (url == null) {
             return "null";
         }
