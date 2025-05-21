@@ -11,7 +11,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/pdfs")
-@CrossOrigin(origins = "studypilot.vercel.app")
 public class PdfController {
 
     @Autowired

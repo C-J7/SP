@@ -20,7 +20,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/study-plan")
-@CrossOrigin(origins = "studypilot.vercel.app")
 @Tag(name = "Study Plan", description = "Endpoints for managing study plans")
 public class StudyPlanController {
 
