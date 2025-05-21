@@ -12,7 +12,7 @@ public class StudySessionResponse {
     private boolean completed;
     private boolean reminderSent;
     
-    // Constructor to initialize StudySessionResponse from StudySession
+    //Constructor to initialize StudySessionResponse from StudySession
     public StudySessionResponse(StudySession session) {
         this.id = session.getId();
         this.topic = session.getTopic();

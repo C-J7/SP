@@ -10,17 +10,17 @@ import java.time.ZonedDateTime;
 public class Pdf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Changed from String to Long
+    private Long id; 
 
     private String name;
     
-    private Integer size;  // int8 in Supabase
+    private Integer size;  
     
     @Column(name = "storage_path")
     private String storagePath;
     
     @Column(name = "uploaded_at")
-    private ZonedDateTime uploadedAt;  // timestamptz in Supabase
+    private ZonedDateTime uploadedAt;  
     
     private String content;
 

@@ -24,8 +24,8 @@ public class GoogleAuthController {
 
     @GetMapping("/callback")
     public ResponseEntity<String> callback(@RequestParam("code") String code) {
-        // Exchange the authorization code for an access token
-        // Use the token to interact with the Google Calendar API
+        //Exchange auth code for access token
+        //Use the token to interact with the Google Calendar API
         return ResponseEntity.ok("Google OAuth successful! Code: " + code);
     }
 }

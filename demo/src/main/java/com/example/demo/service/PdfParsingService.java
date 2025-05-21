@@ -63,7 +63,7 @@ public class PdfParsingService {
 
         for (String line : lines) {
             line = line.trim();
-            // Assuming topics are either bullet points or headings
+            //Assuming topics are either bullet points or headings
             if (line.startsWith("-") || line.startsWith("*") || line.matches("^[0-9]+\\.\\s.*")) {
                 topics.add(line.replaceFirst("^[*-]\\s*", "").replaceFirst("^[0-9]+\\.\\s*", "").trim());
             }
@@ -92,12 +92,12 @@ public class PdfParsingService {
      * @throws IOException if an error occurs during the upload process
      */
     public Pdf uploadToNeon(MultipartFile file) throws IOException {
-        // Validate the PDF file
+        //Validate the PDF file
         if (!isValidPdf(file)) {
             throw new InvalidPdfException("The uploaded file is not a valid PDF");
         }
 
-        // Extract metadata and content
+        //Extract metadata and content
         String content = extractText(file);
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null) {
@@ -105,7 +105,7 @@ public class PdfParsingService {
         }
         String cleanedFilename = UUID.randomUUID() + "_" + originalFilename;
 
-        // Create and save the Pdf entity
+        //Create and save the Pdf entity
         Pdf pdf = new Pdf();
         pdf.setName(originalFilename);
         pdf.setContent(content);

@@ -94,7 +94,7 @@ public class DatabaseConnectionDebugger {
     }
 
     private String maskPassword(String url) {
-        //Don't log actual passwords in URL parameters
+        //Avoid Logging Password.
         if (url == null) {
             return "null";
         }

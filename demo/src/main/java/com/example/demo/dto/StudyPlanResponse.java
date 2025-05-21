@@ -21,7 +21,7 @@ public class StudyPlanResponse {
     private String userId;
     private List<StudySessionResponse> sessions;
 
-    // Constructor to map StudyPlan to StudyPlanResponse
+    //Constructor to map StudyPlan to StudyPlanResponse
     public StudyPlanResponse(StudyPlan studyPlan) {
         this.id = studyPlan.getId();
         this.userId = studyPlan.getUserId();

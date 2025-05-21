@@ -13,7 +13,7 @@ public class BusyHourDTO {
     @Schema(description = "End time of busy hour")
     private LocalDateTime end;
 
-    // getters and setters
+    //getters and setters
     public LocalDateTime getStart() { return start; }
     public void setStart(LocalDateTime start) { this.start = start; }
     public LocalDateTime getEnd() { return end; }

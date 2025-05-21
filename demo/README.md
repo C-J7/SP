@@ -1,13 +1,13 @@
 # StudyPilot Backend
 
-This is the backend service for the StudyPilot application, built with Spring Boot. It provides APIs for managing study plans, syllabi, and PDF parsing.
+This is the backend service for the StudyPilot application, built with Spring Boot(Maven). It provides APIs for managing study plans, syllabi, study progress, and PDF parsing.
 
 ## Table of Contents
 
 - [Setup](#setup)
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
-  - [Supabase Setup](#supabase-setup)
+  - [Neon Setup](#neon-setup)
   - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
   - [Syllabus Management](#syllabus-management)
@@ -23,7 +23,7 @@ This is the backend service for the StudyPilot application, built with Spring Bo
 
 - Java 17 or higher
 - Maven
-- Supabase account
+- Neon Account
 - (Optional) Google Calendar API credentials
 
 ### Environment Variables
@@ -31,12 +31,10 @@ This is the backend service for the StudyPilot application, built with Spring Bo
 Create a `.env` file in the root directory with the following variables:
 
 ```
-# Supabase Configuration
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_KEY=your-supabase-anon-key
-SUPABASE_DB_URL=jdbc:postgresql://db.your-project-id.supabase.co:5432/postgres
-SUPABASE_DB_USER=postgres
-SUPABASE_DB_PASSWORD=your-database-password
+# Neon Configuration
+NEON_DB_URL=your _db_url
+NEON_DB_USER=postgres
+NEON_DB_PASSWORD=your-database-password
 
 # Google Calendar API Configuration (Optional)
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -47,12 +45,12 @@ GOOGLE_REDIRECT_URI=https://studypilot.vercel.app/api/auth/google/callback
 SPRING_PROFILES_ACTIVE=dev
 ```
 
-### Supabase Setup
+### Neon Setup
 
-1. Create a new project in Supabase.
+1. Create a new project in Neon.
 2. Create a storage bucket named "syllabi".
 3. Set the bucket permissions to allow file uploads.
-4. Get your project URL and anon key from the API settings.
+4. Get your project URL  from the API settings.
 5. Get your database connection details from the Database settings.
 
 ### Running the Application

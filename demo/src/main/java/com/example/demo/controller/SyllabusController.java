@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/syllabus")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "studypilot.vercel.app")
 public class SyllabusController {
     
     @Autowired
