@@ -28,7 +28,7 @@ public class StudyPlanController {
 
 
     @Operation(summary = "Generate a new study plan")
-    @PostMapping("/create")
+    @PostMapping("/generate")
     public ResponseEntity<StudyPlanResponse> generateStudyPlan(
             @Valid @RequestBody GenerateStudyPlanRequest request) {
 
