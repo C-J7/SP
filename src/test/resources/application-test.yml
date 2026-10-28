@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:studypilot-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: ""
+
+app:
+  rate-limit:
+    capacity: 1000
+    refill-per-minute: 1000

@@ -1,56 +1,26 @@
-# Stage 1: Build the application
-FROM maven:3.9.4-eclipse-temurin-21 AS builder
+# syntax=docker/dockerfile:1
 
-# Set working directory
-WORKDIR /app
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /workspace
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw && ./mvnw -B -q dependency:go-offline
+COPY src src
+RUN ./mvnw -B -q package -DskipTests \
+ && java -Djarmode=tools -jar target/studypilot-api.jar extract --layers --launcher --destination target/extracted
 
-# Copy Maven configuration files
-COPY demo/pom.xml .
-COPY demo/src ./src
-
-# Download dependencies (this layer will be cached unless dependencies change)
-RUN mvn dependency:go-offline -B
-
-# Build the application
-RUN mvn clean package -DskipTests
-
-# Stage 2: Create the runtime image
 FROM eclipse-temurin:21-jre-alpine
-
-# Create a non-root user for security
-RUN addgroup --system --gid 1001 appuser && \
-    adduser --system --uid 1001 --ingroup appuser appuser
-
-# Set working directory
+RUN addgroup -S app && adduser -S -G app -u 1001 app
 WORKDIR /app
-
-# Copy the built JAR from the builder stage
-COPY --from=builder /app/target/*.jar app.jar
-
-# Set ownership to non-root user
-RUN chown -R appuser:appuser /app
-
-# Use the non-root user
-USER appuser
-
-# Configure JVM options for containers
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
-
-#environment variables for Supabase configuration
-ARG SUPABASE_DB_URL
-ARG SUPABASE_DB_USER
-ARG SUPABASE_DB_PASSWORD
-ARG SUPABASE_URL
-ARG SUPABASE_KEY
-
-ENV SUPABASE_DB_URL=$SUPABASE_DB_URL \
-    SUPABASE_DB_USER=$SUPABASE_DB_USER \
-    SUPABASE_DB_PASSWORD=$SUPABASE_DB_PASSWORD \
-    SUPABASE_URL=$SUPABASE_URL \
-    SUPABASE_KEY=$SUPABASE_KEY
-
-# Expose the application port
+# Layers ordered from least to most frequently changed for cache-friendly rebuilds.
+COPY --from=build /workspace/target/extracted/dependencies/ ./
+COPY --from=build /workspace/target/extracted/spring-boot-loader/ ./
+COPY --from=build /workspace/target/extracted/snapshot-dependencies/ ./
+COPY --from=build /workspace/target/extracted/application/ ./
+USER app
+ENV PORT=8080 \
+    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError"
 EXPOSE 8080
-
-# Run the application
-ENTRYPOINT exec java $JAVA_OPTS -jar app.jar
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/actuator/health/liveness" || exit 1
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
