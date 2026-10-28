@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Verify
+        run: ./mvnw -B verify
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports
+
+  postgres-migrations:
+    name: Migrations on PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: studypilot
+          POSTGRES_USER: studypilot
+          POSTGRES_PASSWORD: studypilot
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U studypilot" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Boot against PostgreSQL and validate the schema
+        env:
+          SPRING_PROFILES_ACTIVE: prod
+          DB_URL: jdbc:postgresql://localhost:5432/studypilot
+          DB_USERNAME: studypilot
+          DB_PASSWORD: studypilot
+        run: |
+          ./mvnw -B -q package -DskipTests
+          java -jar target/studypilot-api.jar &
+          for i in $(seq 1 60); do
+            curl -sf localhost:8080/actuator/health/readiness && exit 0
+            sleep 2
+          done
+          exit 1
+
+  docker:
+    name: Container image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t studypilot-api:ci .
