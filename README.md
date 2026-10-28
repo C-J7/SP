@@ -11,7 +11,7 @@ The Spring Boot backend for [StudyPilot](https://github.com/C-J7/studypilot), bu
 [![Flyway](https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white)](https://flywaydb.org)
 [![CI](https://img.shields.io/github/actions/workflow/status/C-J7/SP/ci.yml?branch=main&style=for-the-badge&label=CI)](https://github.com/C-J7/SP/actions/workflows/ci.yml)
 
-[Live app](https://studypilot.vercel.app) · [Live API docs](https://devj7-studypilot-api.hf.space/swagger-ui.html) · [Health](https://devj7-studypilot-api.hf.space/actuator/health) · [Architecture](#architecture) · [Engineering decisions](#engineering-decisions)
+[Live app](https://studypilot.vercel.app) · [Live API docs](https://sp-5rvl.onrender.com/swagger-ui.html) · [Health](https://sp-5rvl.onrender.com/actuator/health) · [Architecture](#architecture) · [Engineering decisions](#engineering-decisions)
 
 </div>
 
@@ -48,18 +48,18 @@ The Spring Boot backend for [StudyPilot](https://github.com/C-J7/studypilot), bu
 ## Try it in two minutes
 
 1. Open the [live app](https://studypilot.vercel.app/login) and choose **Explore the demo**. The demo account is seeded on every boot with two courses, a live streak and a broken one, so every chart has data.
-2. Tick off a session, then watch progress and the [audit trail](https://devj7-studypilot-api.hf.space/api/audit/user/demo-user) update.
+2. Tick off a session, then watch progress and the [audit trail](https://sp-5rvl.onrender.com/api/audit/user/demo-user) update.
 3. Upload [`docs/sample-syllabus.pdf`](docs/sample-syllabus.pdf) and generate a plan from it.
-4. Or skip the UI and drive the API from [Swagger UI](https://devj7-studypilot-api.hf.space/swagger-ui.html).
+4. Or skip the UI and drive the API from [Swagger UI](https://sp-5rvl.onrender.com/swagger-ui.html).
 
 ```bash
 # Generate a plan twice with the same key: one plan is created, the second call replays it.
-curl -i -X POST https://devj7-studypilot-api.hf.space/api/study-plan/generate \
+curl -i -X POST https://sp-5rvl.onrender.com/api/study-plan/generate \
   -H 'Content-Type: application/json' -H 'Idempotency-Key: demo-0001-retry-safe' \
   -d '{"syllabusId":1,"userId":"demo-user","startDate":"2026-11-02","endDate":"2026-11-20","hoursPerDay":2,"preferredTime":"evening"}'
 ```
 
-The demo runs on a free Hugging Face Space with an in-memory database, so it sleeps when idle (the first request can take about a minute) and resets on restart.
+The demo runs on the Render free tier with an in-memory database, so it sleeps after 15 minutes idle (the first request can take about a minute) and resets on restart.
 
 ## Tech stack
 
@@ -169,7 +169,7 @@ The plan, its sessions, the audit event and the idempotency record are written i
 
 ## API
 
-Base URL for the live demo: `https://devj7-studypilot-api.hf.space`. The full contract is in [Swagger UI](https://devj7-studypilot-api.hf.space/swagger-ui.html).
+Base URL for the live demo: `https://sp-5rvl.onrender.com`. The full contract is in [Swagger UI](https://sp-5rvl.onrender.com/swagger-ui.html).
 
 | Method | Path | Notes |
 |--------|------|-------|
@@ -268,7 +268,7 @@ CI ([`ci.yml`](.github/workflows/ci.yml)) runs the suite, boots the jar against 
 | Merge to `main` | The image is the deployable artifact; any container host works (Render, Fly.io, Cloud Run, Kubernetes) |
 | Set `SPRING_PROFILES_ACTIVE=prod` and the `DB_*` secrets | Flyway migrates on startup, Hibernate validates, readiness turns green at `/actuator/health/readiness` |
 
-The public demo is a Hugging Face Docker Space that builds this repository's `main` branch on the `demo` profile.
+The public demo is a Render free web service that builds this repository's Dockerfile from `main` on the default `demo` profile.
 
 ## Progress and roadmap
 
