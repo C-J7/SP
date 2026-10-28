@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM eclipse-temurin:25-jdk-alpine AS build
 WORKDIR /workspace
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
@@ -9,7 +9,7 @@ COPY src src
 RUN ./mvnw -B -q package -DskipTests \
  && java -Djarmode=tools -jar target/studypilot-api.jar extract --layers --launcher --destination target/extracted
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 RUN addgroup -S app && adduser -S -G app -u 1001 app
 WORKDIR /app
 # Layers ordered from least to most frequently changed for cache-friendly rebuilds.
